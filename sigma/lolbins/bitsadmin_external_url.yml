@@ -1,0 +1,40 @@
+title: Bitsadmin BITS Job Created with External URL
+id: 8e3f5b1a-4d2c-4e9f-b5a7-1c0e3f8b5a2d
+status: experimental
+description: Detects bitsadmin invocations creating BITS transfer jobs referencing external URLs. Attackers abuse the Background Intelligent Transfer Service to download payloads from attacker-controlled infrastructure using a trusted Windows service that may evade network monitoring controls. Legitimate bitsadmin usage in enterprise environments is relatively uncommon outside of specific software deployment scenarios.
+references:
+    - https://attack.mitre.org/techniques/T1197/
+    - https://lolbas-project.github.io/lolbas/Binaries/Bitsadmin/
+author: dcrowder252
+date: 2026/09/05
+modified: 2026/09/05
+tags:
+    - attack.command_and_control
+    - attack.t1197
+    - attack.persistence
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_process:
+        Image|endswith: '\bitsadmin.exe'
+    selection_transfer:
+        CommandLine|contains:
+            - '/transfer'
+            - '/create'
+            - '/addfile'
+    selection_url:
+        CommandLine|contains:
+            - 'http://'
+            - 'https://'
+    condition: selection_process and selection_transfer and selection_url
+falsepositives:
+    - Legitimate software deployment tools that use BITS for downloading updates or packages from external URLs
+    - Establish a baseline of approved bitsadmin usage before alerting
+level: high
+fields:
+    - Image
+    - CommandLine
+    - ParentImage
+    - User
+    - ComputerName

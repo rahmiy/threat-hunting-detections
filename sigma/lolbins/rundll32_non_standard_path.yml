@@ -1,0 +1,37 @@
+title: Rundll32 Loading DLL from Non-Standard Path
+id: 3f8e2a1d-7c4b-4f9e-b6d5-2c1a0f8e3b7d
+status: experimental
+description: Detects rundll32 invocations referencing DLL files in non-standard locations such as temporary directories or user-writable paths. Legitimate rundll32 usage typically involves DLL files in System32 or standard application directories. DLLs staged in temporary or user profile locations are a strong indicator of malicious activity.
+references:
+    - https://attack.mitre.org/techniques/T1218/011/
+    - https://lolbas-project.github.io/lolbas/Binaries/Rundll32/
+author: dcrowder252
+date: 2026/09/05
+modified: 2026/09/05
+tags:
+    - attack.defense_evasion
+    - attack.t1218.011
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_process:
+        Image|endswith: '\rundll32.exe'
+    selection_path:
+        CommandLine|contains:
+            - '\temp\'
+            - '\tmp\'
+            - '\appdata\'
+            - '\programdata\'
+            - '\users\'
+    condition: selection_process and selection_path
+falsepositives:
+    - Legitimate software that temporarily stages DLL files in user directories during installation
+    - Establish a baseline of approved rundll32 usage before alerting
+level: medium
+fields:
+    - Image
+    - CommandLine
+    - ParentImage
+    - User
+    - ComputerName

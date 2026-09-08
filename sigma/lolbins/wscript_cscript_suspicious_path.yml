@@ -1,0 +1,40 @@
+title: Wscript or Cscript Executing Script from Suspicious Path
+id: 2a7f4e1d-8b3c-4f9e-c5d6-3b1e0f7a2c4d
+status: experimental
+description: Detects wscript or cscript executing script files from temporary directories or user-writable locations commonly used to stage malicious scripts delivered through phishing or drive-by download activity. Legitimate script execution typically involves scripts in standard application or administrative directories.
+references:
+    - https://attack.mitre.org/techniques/T1059/005/
+    - https://lolbas-project.github.io/lolbas/Binaries/Wscript/
+author: dcrowder252
+date: 2026/09/05
+modified: 2026/09/05
+tags:
+    - attack.execution
+    - attack.t1059.005
+    - attack.t1059.007
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_process:
+        Image|endswith:
+            - '\wscript.exe'
+            - '\cscript.exe'
+    selection_path:
+        CommandLine|contains:
+            - '\temp\'
+            - '\tmp\'
+            - '\appdata\'
+            - '\programdata\'
+            - '\downloads\'
+    condition: selection_process and selection_path
+falsepositives:
+    - Legitimate administrative scripts temporarily staged in user directories
+    - Establish a baseline of approved script execution locations before alerting
+level: medium
+fields:
+    - Image
+    - CommandLine
+    - ParentImage
+    - User
+    - ComputerName

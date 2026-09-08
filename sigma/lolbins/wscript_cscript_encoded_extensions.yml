@@ -1,0 +1,40 @@
+title: Wscript or Cscript Executing Encoded Script File
+id: 6d1e4a8f-2b5c-4e7f-d3a9-1c4f8d2b6e1a
+status: experimental
+description: Detects wscript or cscript executing encoded or obfuscated script file types including .vbe, .jse, .wsf, and .wsh. These file types are less commonly used in legitimate administrative scenarios and are frequently observed in phishing payloads and malware droppers. Encoded script files are specifically designed to obscure malicious content from casual inspection.
+references:
+    - https://attack.mitre.org/techniques/T1059/005/
+    - https://lolbas-project.github.io/lolbas/Binaries/Wscript/
+author: dcrowder252
+date: 2026/09/05
+modified: 2026/09/05
+tags:
+    - attack.execution
+    - attack.t1059.005
+    - attack.t1059.007
+    - attack.defense_evasion
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_process:
+        Image|endswith:
+            - '\wscript.exe'
+            - '\cscript.exe'
+    selection_extension:
+        CommandLine|contains:
+            - '.vbe'
+            - '.jse'
+            - '.wsf'
+            - '.wsh'
+    condition: selection_process and selection_extension
+falsepositives:
+    - Legitimate administrative automation that uses WSF or WSH files for task orchestration
+    - Establish a baseline of approved script file types before alerting
+level: high
+fields:
+    - Image
+    - CommandLine
+    - ParentImage
+    - User
+    - ComputerName

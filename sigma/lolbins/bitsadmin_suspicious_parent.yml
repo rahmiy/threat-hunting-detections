@@ -1,0 +1,44 @@
+title: Bitsadmin Spawned by Suspicious Parent Process
+id: 6a2d8f4e-3b1c-4e9d-c5f8-2a0d6f8e3b1c
+status: experimental
+description: Detects bitsadmin spawned by parent processes not typically associated with legitimate BITS job management. Bitsadmin being launched by scripting engines, Office applications, or command interpreters in suspicious contexts is a strong indicator of malicious activity using BITS for payload delivery or persistence.
+references:
+    - https://attack.mitre.org/techniques/T1197/
+    - https://lolbas-project.github.io/lolbas/Binaries/Bitsadmin/
+author: dcrowder252
+date: 2026/09/05
+modified: 2026/09/05
+tags:
+    - attack.command_and_control
+    - attack.t1197
+    - attack.persistence
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_process:
+        Image|endswith: '\bitsadmin.exe'
+    selection_parent:
+        ParentImage|endswith:
+            - '\winword.exe'
+            - '\excel.exe'
+            - '\powerpnt.exe'
+            - '\outlook.exe'
+            - '\mshta.exe'
+            - '\wscript.exe'
+            - '\cscript.exe'
+            - '\explorer.exe'
+            - '\powershell.exe'
+            - '\cmd.exe'
+    condition: selection_process and selection_parent
+falsepositives:
+    - Legitimate software deployment scripts that invoke bitsadmin through PowerShell or cmd
+    - explorer.exe, powershell.exe, and cmd.exe may generate more noise than other parent processes and can be excluded if needed
+    - Establish a baseline of approved bitsadmin usage before alerting
+level: medium
+fields:
+    - Image
+    - CommandLine
+    - ParentImage
+    - User
+    - ComputerName

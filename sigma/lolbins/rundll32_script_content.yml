@@ -1,0 +1,36 @@
+title: Rundll32 Executing Script or Scriptlet Content
+id: 5c1f9d3a-2e7b-4c8f-b4a6-1d0f5e8c2b3a
+status: experimental
+description: Detects rundll32 invocations associated with JavaScript or COM scriptlet execution through mshtml.dll or similar mechanisms. This technique allows attackers to execute script content through the trusted rundll32 binary potentially bypassing application allowlisting controls.
+references:
+    - https://attack.mitre.org/techniques/T1218/011/
+    - https://lolbas-project.github.io/lolbas/Binaries/Rundll32/
+author: dcrowder252
+date: 2026/09/05
+modified: 2026/09/05
+tags:
+    - attack.defense_evasion
+    - attack.t1218.011
+    - attack.execution
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_process:
+        Image|endswith: '\rundll32.exe'
+    selection_script:
+        CommandLine|contains:
+            - 'mshtml'
+            - 'javascript'
+            - '.sct'
+    condition: selection_process and selection_script
+falsepositives:
+    - Legitimate applications that use mshtml.dll through rundll32 for HTML rendering functionality
+    - Establish a baseline of approved rundll32 usage before alerting
+level: high
+fields:
+    - Image
+    - CommandLine
+    - ParentImage
+    - User
+    - ComputerName

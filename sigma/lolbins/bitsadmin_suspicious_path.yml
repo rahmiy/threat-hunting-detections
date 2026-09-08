@@ -1,0 +1,40 @@
+title: Bitsadmin Downloading File to Suspicious Path
+id: 1c5e9f3a-7b2d-4e8c-a4f6-3d1b0e5c9f2a
+status: experimental
+description: Detects bitsadmin invocations downloading files to temporary directories or user-writable locations commonly used to stage malicious payloads. Legitimate BITS downloads typically target standard application or system directories rather than user-writable locations associated with payload staging.
+references:
+    - https://attack.mitre.org/techniques/T1197/
+    - https://lolbas-project.github.io/lolbas/Binaries/Bitsadmin/
+author: dcrowder252
+date: 2026/09/05
+modified: 2026/09/05
+tags:
+    - attack.command_and_control
+    - attack.t1197
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_process:
+        Image|endswith: '\bitsadmin.exe'
+    selection_transfer:
+        CommandLine|contains:
+            - '/transfer'
+            - '/addfile'
+    selection_path:
+        CommandLine|contains:
+            - '\temp\'
+            - '\tmp\'
+            - '\appdata\'
+            - '\programdata\'
+    condition: selection_process and selection_transfer and selection_path
+falsepositives:
+    - Legitimate software that uses BITS to download temporary installation files
+    - Establish a baseline of approved bitsadmin usage before alerting
+level: medium
+fields:
+    - Image
+    - CommandLine
+    - ParentImage
+    - User
+    - ComputerName

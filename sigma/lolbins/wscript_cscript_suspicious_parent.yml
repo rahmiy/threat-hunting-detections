@@ -1,0 +1,48 @@
+title: Wscript or Cscript Spawned by Suspicious Parent Process
+id: 4f9c2e7a-1b3d-4e8c-f6a5-2d0c4f8e1b3a
+status: experimental
+description: Detects wscript or cscript spawned by parent processes commonly associated with phishing-based initial access including Office applications and browser processes. Script Host engines being launched by these processes is a strong indicator of malicious document or file execution attempting to use Windows scripting for payload execution.
+references:
+    - https://attack.mitre.org/techniques/T1059/005/
+    - https://lolbas-project.github.io/lolbas/Binaries/Wscript/
+author: dcrowder252
+date: 2026/09/05
+modified: 2026/09/05
+tags:
+    - attack.execution
+    - attack.t1059.005
+    - attack.t1059.007
+    - attack.initial_access
+    - attack.t1566.001
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_process:
+        Image|endswith:
+            - '\wscript.exe'
+            - '\cscript.exe'
+    selection_parent:
+        ParentImage|endswith:
+            - '\winword.exe'
+            - '\excel.exe'
+            - '\powerpnt.exe'
+            - '\outlook.exe'
+            - '\mshta.exe'
+            - '\explorer.exe'
+            - '\chrome.exe'
+            - '\msedge.exe'
+            - '\firefox.exe'
+            - '\iexplore.exe'
+    condition: selection_process and selection_parent
+falsepositives:
+    - Legitimate web-based applications that invoke scripting engines through the browser
+    - explorer.exe may generate more noise than other parent processes and can be excluded if needed
+    - Establish a baseline of approved script execution activity before alerting
+level: high
+fields:
+    - Image
+    - CommandLine
+    - ParentImage
+    - User
+    - ComputerName
