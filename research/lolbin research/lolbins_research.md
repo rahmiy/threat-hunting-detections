@@ -1,4 +1,4 @@
-# Living off the Land Binary Abuse in Enterprise Environments
+# Living off the Land Binary Abuse in Enterprise Environments - Certutil, Mshta, & Regsvr32
 
 ## Overview
 

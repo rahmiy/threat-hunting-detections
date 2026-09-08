@@ -1,6 +1,6 @@
-# Threat Hunt: Living off the Land Binary Abuse
+# Threat Hunt: Living off the Land Binary Abuse - Certutil, Mshta, & Regsvr32
 
-## Overview
+## Overview 
 
 Living off the Land Binaries are legitimate, signed Windows system executables that attackers repurpose to carry out malicious activity while blending into normal administrative operations. Because these binaries are trusted components of the operating system, their execution rarely raises immediate suspicion and they frequently bypass application allowlisting controls and traditional antivirus solutions. This hunt focuses on identifying suspicious usage patterns associated with three commonly abused Windows utilities — certutil.exe, mshta.exe, and regsvr32.exe — through analysis of process creation telemetry and command-line arguments.
 
