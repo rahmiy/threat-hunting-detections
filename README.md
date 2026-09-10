@@ -1,18 +1,18 @@
 # Threat Hunting & Detection Engineering Portfolio
 
-![Last Updated](https://img.shields.io/badge/Last_Updated-2026--07--06-blue)
+![Last Updated](https://img.shields.io/badge/Last_Updated-2026--09--09-blue)
 ![GitHub Repo Size](https://img.shields.io/github/repo-size/dcrowder252/threat-hunting-detections)
 
 ## Table of Contents
 
-- [Threat Hunting \& Detection Engineering Portfolio](#threat-hunting--detection-engineering-portfolio)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Technical Focus Areas](#technical-focus-areas)
-  - [Repository Structure](#repository-structure)
-  - [Methodology](#methodology)
-  - [Purpose](#purpose)
-  - [Contact](#contact)
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [Hunt Coverage](#hunt-coverage)
+- [Methodology](#methodology)
+- [Purpose](#purpose)
+- [Contact](#contact)
+
+---
 
 ## Overview
 
@@ -30,36 +30,79 @@ The goal of this project is to translate real-world attacker behavior into actio
 
 ---
 
-## Technical Focus Areas
+## Repository Structure
 
-- MITRE ATT&CK–based detection engineering
-- Living-off-the-land (LOLBin) abuse detection
-- Credential access monitoring
-- Persistence detection
-- Lateral movement analysis
-- Command & Control (C2) behavior detection
-- Threat intelligence to detection conversion
+The repository is organized by platform and domain to make content easy to navigate regardless of your environment.
+
+```
+threat-hunting-detections/
+├── windows/
+│   ├── powershell-abuse/
+│   ├── log-clearing/
+│   ├── scheduled-task-abuse/
+│   ├── lolbins-certutil-mshta-regsvr32/
+│   └── lolbins-rundll32-wscript-bitsadmin/
+├── linux/
+│   ├── log-clearing/
+│   └── scheduled-task-abuse/
+├── cloud/
+│   ├── azure-entra-identity/
+│   └── aws-identity/
+├── rmm/
+│   └── rmm-abuse/
+└── intel-hunts/
+    └── bumblebee-adaptixc2-akira/
+```
+
+Each topic folder contains:
+- A research paper covering the threat landscape and attacker tradecraft
+- A hunt document with hypotheses and detection guidance
+- Platform-specific queries (Splunk, CrowdStrike, KQL where applicable)
+- Sigma rules for vendor-agnostic detection coverage
+
+> **Note:** This repository was restructured in September 2026 to improve navigation. If you previously bookmarked direct links to specific files those links may need to be updated.
 
 ---
 
-## Repository Structure
+## Hunt Coverage
 
-The project is organized into modular detection engineering domains:
+### Windows
 
-- `sigma/` — Vendor-agnostic detection rules
-  - `sigma/intel_hunts/` — Sigma rules derived from real-world threat intelligence reporting
-- `hunts/` — Documented threat hunting investigations
-  - `hunts/intel_hunts/` — Hunt documents built directly from threat intelligence articles and advisories
-- `research/` — Technical analysis and threat research
-  - Threat research and behavioral analysis that informs hunting hypotheses and detection development.
-- `splunk/` — Splunk-specific detection queries
-  - `splunk/intel_hunts/` — Splunk queries derived from real-world threat intelligence reporting
-- `kql/` — Microsoft Sentinel / Defender queries
-  - `kql/intel_hunts/` — KQL queries derived from real-world threat intelligence reporting
-- `crowdstrike/` — CrowdStrike LogScale queries
-  - `crowdstrike/intel_hunts/` — CrowdStrike LogScale queries derived from real-world threat intelligence reporting
+| Topic | Research | Hunt Doc | CrowdStrike | Splunk | KQL | Sigma |
+|---|---|---|---|---|---|---|
+| PowerShell Abuse | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Log Clearing | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Scheduled Task Abuse | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| LOLBins — Certutil, Mshta, Regsvr32 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| LOLBins — Rundll32, Wscript, Cscript, Bitsadmin | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-Each folder contains documentation and artifacts aligned to detection engineering workflows.
+### Linux
+
+| Topic | Research | Hunt Doc | CrowdStrike | Splunk | KQL | Sigma |
+|---|---|---|---|---|---|---|
+| Log Clearing | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Scheduled Task Abuse | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+### Cloud
+
+| Topic | Research | Hunt Doc | CrowdStrike | Splunk | KQL | Sigma |
+|---|---|---|---|---|---|---|
+| Azure & Entra ID Identity | ✅ | ✅ | ➖ | ✅ | ✅ | ✅ |
+| AWS Identity | ✅ | ✅ | ➖ | ✅ | ➖ | ✅ |
+
+> ➖ Not applicable — see hunt document for explanation
+
+### RMM
+
+| Topic | Research | Hunt Doc | CrowdStrike | Splunk | KQL | Sigma |
+|---|---|---|---|---|---|---|
+| RMM Tool Abuse | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+### Intel Hunts
+
+| Topic | Research | Hunt Doc | CrowdStrike | Splunk | KQL | Sigma |
+|---|---|---|---|---|---|---|
+| BumbleBee / AdaptixC2 / Akira | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 ---
 
@@ -68,10 +111,10 @@ Each folder contains documentation and artifacts aligned to detection engineerin
 My workflow typically follows this progression:
 
 **Standard Hunts:**
-Research → Hunt → Sigma Detection → (Splunk → CrowdStrike → KQL)
+Research → Hunt Document → CrowdStrike → Splunk → KQL → Sigma
 
 **Intel Hunts:**
-Threat Intelligence Report → Hunt Document → Sigma Detection → (Splunk → CrowdStrike → KQL)
+Threat Intelligence Report → Hunt Document → CrowdStrike → Splunk → KQL → Sigma
 
 Where possible, detections are:
 
@@ -85,10 +128,10 @@ Where possible, detections are:
 
 This repository demonstrates practical capability in:
 
-- Writing detection logic
-- Investigating suspicious telemetry
+- Writing detection logic across multiple SIEM and EDR platforms
+- Investigating suspicious telemetry and building hunt hypotheses
 - Translating threat reports into actionable detections
-- Building platform-specific security content
+- Building platform-specific security content at scale
 
 It serves as both a technical portfolio and a foundation for future professional consulting or product development.
 
@@ -96,7 +139,8 @@ It serves as both a technical portfolio and a foundation for future professional
 
 ## Contact
 
-Daniel Crowder - datello676@gmail.com
+Daniel Crowder - datello676@gmail.com  
 Huntsville, Alabama  
-Threat Hunting | Detection Engineering
-
+Threat Hunting | Detection Engineering  
+LinkedIn: https://www.linkedin.com/in/dcrowder252  
+X: https://x.com/dcrowder252  
